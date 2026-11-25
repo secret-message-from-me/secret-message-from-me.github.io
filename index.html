@@ -62,7 +62,6 @@
     .ltr:hover { transform: translateY(-8px) rotate(-8deg); color: var(--marigold); }
     @keyframes drop { from { transform: translateY(-0.7em) rotate(-14deg); opacity: 0; } }
     .lede { font-size: 1.3rem; color: var(--muted); margin-top: 16px; max-width: 34ch; }
-    .lede + .lede { font-size: 1.1rem; margin-top: 10px; }
     .bouquet { width: 100%; max-width: 460px; justify-self: center; overflow: visible; }
     .bloom { transform: scale(0); transform-box: fill-box; transform-origin: center; transition: transform .7s cubic-bezier(.3,1.5,.5,1) var(--d); }
     .opened .bloom { transform: scale(1); }
@@ -203,7 +202,6 @@
     <section class="hero wrap split">
       <div>
         <h1><span class="sr" id="title-text"></span><span aria-hidden="true" id="title-art"></span></h1>
-        <p class="lede">Every good romcom starts with a meet-cute. Yours was with a SAS dataset, and it was love at first PROC. 💛🎬</p>
         <p class="lede">Master's: done. SAS Programmer / Analyst at IQVIA: unlocked. And no dramatic airport run in the rain, because the office is your own room in Kochi.</p>
       </div>
       <svg class="bouquet" id="bouquet" viewBox="0 0 400 450" role="img" aria-label="A bouquet of yellow flowers"></svg>
