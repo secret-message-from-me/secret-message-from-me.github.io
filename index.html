@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Congratulations!</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>">
+  <style>
+    :root { --bg1: #ffecd2; --bg2: #fcb69f; --fg: #2b1d16; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg1: #2b1055; --bg2: #7597de; --fg: #fdfbff; }
+    }
+    * { margin: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      display: grid; place-items: center; text-align: center; padding: 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--fg); background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
+    h1 { font-size: clamp(2.5rem, 10vw, 6rem); line-height: 1.1; }
+    p { font-size: clamp(1.1rem, 4vw, 1.75rem); margin-top: 1rem; opacity: .85; }
+    .c {
+      position: fixed; top: -12px; width: 10px; height: 14px; pointer-events: none;
+      animation: fall linear forwards;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Congratulations! 🎉</h1>
+    <p>You did it.</p>
+  </main>
+  <script>
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const colors = ["#ff595e", "#ffca3a", "#8ac926", "#1982c4", "#6a4c93"];
+      for (let i = 0; i < 150; i++) {
+        const c = document.createElement("div");
+        c.className = "c";
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.background = colors[i % colors.length];
+        c.style.animationDuration = 2.5 + Math.random() * 2.5 + "s";
+        c.style.animationDelay = Math.random() * 1.5 + "s";
+        c.addEventListener("animationend", () => c.remove());
+        document.body.appendChild(c);
+      }
+    }
+  </script>
+</body>
+</html>
