@@ -2,107 +2,171 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Congratulations! 🦄</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦄</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Congratulations! 🌻</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <style>
     :root {
       --paper: #F1EAFF; --ink: #2E1A47; --muted: #5D4A78; --card: #FFFFFF;
-      --pink: #FF8FC7; --mint: #7FE3C4; --butter: #FFD966; --sky: #8EC9FF; --lilac: #B79CFF;
+      --sun: #FFC93C; --marigold: #FF9F1C; --leaf: #4C8C4A;
+      --pink: #FF8FC7; --mint: #7FE3C4; --sky: #8EC9FF; --lilac: #B79CFF;
       --foil1: #EEF1F6; --foil2: #C8CDD8; --catfur: #2E1A47;
+      --beat: .48s;
     }
     @media (prefers-color-scheme: dark) {
       :root { --paper: #1C1230; --ink: #F4ECFF; --muted: #C9B8E6; --card: #2A1D44; --foil1: #B9BFCB; --foil2: #7D8494; --catfur: #F4ECFF; }
     }
     * { margin: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      min-height: 100vh; padding: 48px 16px 64px;
       font: 400 1.125rem/1.6 "Atkinson Hyperlegible", system-ui, sans-serif;
-      color: var(--ink); background-color: var(--paper);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0l28 16v32L28 64 0 48V16zM28 64v33' fill='none' stroke='%23B79CFF' stroke-opacity='.22' stroke-width='1.5'/%3E%3C/svg%3E");
+      color: var(--ink); background-color: var(--paper); overflow-x: hidden;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0l28 16v32L28 64 0 48V16zM28 64v33' fill='none' stroke='%23B79CFF' stroke-opacity='.2' stroke-width='1.5'/%3E%3C/svg%3E");
     }
-    main { max-width: 640px; margin: 0 auto; display: grid; gap: 40px; }
+    body.locked { overflow: hidden; height: 100svh; }
+    body.playing { --beat: .32s; }
     button { font: inherit; color: inherit; }
-    button:focus-visible { outline: 3px solid var(--lilac); outline-offset: 4px; }
+    :focus-visible { outline: 3px solid var(--lilac); outline-offset: 4px; }
     .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .wrap { max-width: 1040px; margin: 0 auto; padding-inline: 16px; }
+    section { padding: 56px 0; }
+    .split { display: grid; gap: 32px; align-items: center; }
+    @media (min-width: 860px) { .split { grid-template-columns: 1fr 1fr; gap: 56px; } }
+    h2 { font: 700 clamp(1.8rem, 6vw, 2.6rem)/1.1 "Fredoka", sans-serif; margin-bottom: 12px; }
+    .hint { color: var(--muted); }
+    .btn { background: var(--sun); color: #2E1A47; border: 2px solid var(--ink); border-radius: 999px; padding: 10px 22px; font-weight: 700; cursor: pointer; }
+    .btn:active { transform: scale(.96); }
+    .btn:disabled { opacity: .6; cursor: default; }
+
+    /* Gate */
+    .gate { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; align-content: center; gap: 20px; padding: 16px; text-align: center; background: var(--paper); transition: opacity .7s .25s; }
+    .opened .gate { opacity: 0; pointer-events: none; }
+    .gate p { font: 700 clamp(1.4rem, 6vw, 2rem)/1.2 "Fredoka", sans-serif; }
+    .gift { background: none; border: 0; cursor: pointer; display: grid; justify-items: center; gap: 12px; }
+    .gift svg { width: min(56vw, 220px); overflow: visible; animation: nudge 2.4s ease-in-out infinite; }
+    .gift .lid { transition: transform .5s ease-in, opacity .5s; transform-box: fill-box; transform-origin: center; }
+    .opened .gift .lid { transform: translateY(-90px) rotate(-25deg); opacity: 0; }
+    .gift .btn { font-size: 1.25rem; }
+    @keyframes nudge { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-6deg); } 90% { transform: rotate(6deg); } 95% { transform: rotate(-3deg); } }
 
     /* Hero */
-    h1 { font: 700 clamp(2.6rem, 11vw, 4.75rem)/1.02 "Fredoka", sans-serif; letter-spacing: -0.01em; text-align: center; }
+    .hero { padding-top: 40px; }
+    h1 { font: 700 clamp(2.6rem, 9vw, 4.6rem)/1.02 "Fredoka", sans-serif; letter-spacing: -0.01em; }
     .word { display: inline-block; white-space: nowrap; }
-    .ltr { display: inline-block; transition: transform .2s; animation: drop .55s cubic-bezier(.3,1.6,.5,1) backwards; animation-delay: calc(var(--i) * 40ms); }
-    .ltr:hover { transform: translateY(-8px) rotate(-8deg); color: var(--pink); }
+    .ltr { display: inline-block; transition: transform .2s, color .2s; }
+    .opened .ltr { animation: drop .55s cubic-bezier(.3,1.6,.5,1) backwards; animation-delay: calc(.5s + var(--i) * 40ms); }
+    .ltr:hover { transform: translateY(-8px) rotate(-8deg); color: var(--marigold); }
     @keyframes drop { from { transform: translateY(-0.7em) rotate(-14deg); opacity: 0; } }
-    .lede { text-align: center; font-size: 1.3rem; color: var(--muted); max-width: 30ch; margin: 16px auto 0; }
+    .lede { font-size: 1.3rem; color: var(--muted); margin-top: 16px; max-width: 32ch; }
+    .bouquet { width: 100%; max-width: 460px; justify-self: center; overflow: visible; }
+    .bloom { transform: scale(0); transform-box: fill-box; transform-origin: center; transition: transform .7s cubic-bezier(.3,1.5,.5,1) var(--d); }
+    .opened .bloom { transform: scale(1); }
+    .flower { transform-box: fill-box; transform-origin: center; animation: sway var(--s) ease-in-out infinite alternate; cursor: pointer; }
+    .flower.spin { animation: spin .6s ease-out; }
+    @keyframes sway { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+    @keyframes spin { to { transform: rotate(360deg) scale(1.15); } }
 
-    /* Rx label */
-    .rx { background: var(--card); border: 2px solid var(--ink); border-radius: 12px; transform: rotate(-1.5deg); max-width: 420px; justify-self: center; width: 100%; overflow: hidden; }
+    /* Job badge */
+    .badge { justify-self: center; width: min(100%, 360px); background: var(--card); border: 2px solid var(--ink); border-radius: 20px; overflow: hidden; transform: rotate(-2deg); position: relative; margin-top: 28px; }
+    .badge::before { content: ""; position: absolute; top: 12px; left: 50%; width: 56px; height: 10px; margin-left: -28px; border-radius: 99px; background: var(--paper); border: 2px solid var(--ink); }
+    .badge-top { background: var(--sun); color: #2E1A47; padding: 34px 20px 14px; border-bottom: 2px solid var(--ink); font: 700 1.5rem/1.15 "Fredoka", sans-serif; }
+    .badge-top small { display: block; font: 400 1rem "Atkinson Hyperlegible", sans-serif; }
+    .badge dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; padding: 16px 20px 20px; }
+    .badge dt, .rx dt { color: var(--muted); }
+    .badge dd, .rx dd { font-weight: 700; }
+
+    /* SAS editor */
+    .sas { background: #FFFFFF; color: #000; border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; font-size: 13.5px; }
+    .sas-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; background: #E9EEF6; border-bottom: 1px solid #C4CCD8; font: 700 .95rem "Atkinson Hyperlegible", sans-serif; color: #1D2B44; }
+    .sas-bar .btn { padding: 4px 16px; font-size: .95rem; background: #7FE3C4; }
+    .sas pre { margin: 0; padding: 12px 0; overflow-x: auto; font: 13.5px/1.55 "Courier New", Courier, monospace; counter-reset: ln; }
+    .sas .line { display: block; padding-right: 12px; white-space: pre; }
+    .sas .code .line::before { counter-increment: ln; content: counter(ln); display: inline-block; width: 2.6em; padding-right: .8em; text-align: right; color: #9AA3B2; }
+    .kw { color: #000080; font-weight: 700; } .st { color: #0000FF; } .str { color: #800080; } .num { color: #008080; font-weight: 700; } .cm { color: #008000; }
+    .log { border-top: 1px solid #C4CCD8; background: #FAFBFD; min-height: 3.2em; }
+    .log .line { padding-left: 12px; }
+    .log .note { color: #0000FF; }
+    .log .muted { color: #666; }
+    .results { border-top: 1px solid #C4CCD8; padding: 14px 12px; overflow-x: auto; }
+    .results h3 { text-align: center; font: 700 1rem "Atkinson Hyperlegible", sans-serif; margin-bottom: 10px; }
+    .results table { border-collapse: collapse; margin: 0 auto; font: 13px/1.4 "Atkinson Hyperlegible", sans-serif; }
+    .results th, .results td { border: 1px solid #C4CCD8; padding: 4px 10px; text-align: left; white-space: nowrap; }
+    .results th { background: #E9EEF6; color: #1D2B44; }
+    .results[hidden] { display: none; }
+
+    /* Panipuri */
+    .dancer { width: min(70%, 260px); justify-self: center; overflow: visible; }
+    .dance { transform-box: fill-box; transform-origin: 50% 100%; animation: bob var(--beat) ease-in-out infinite alternate; }
+    .arm-l { transform-origin: 36px 100px; animation: armL var(--beat) ease-in-out infinite alternate; }
+    .arm-r { transform-origin: 124px 100px; animation: armR var(--beat) ease-in-out infinite alternate; }
+    .leg-l { transform-origin: 68px 138px; animation: leg var(--beat) ease-in-out infinite alternate; }
+    .leg-r { transform-origin: 92px 138px; animation: leg var(--beat) ease-in-out infinite alternate-reverse; }
+    @keyframes bob { from { transform: translateY(0) rotate(-7deg); } to { transform: translateY(-12px) rotate(7deg); } }
+    @keyframes armL { from { transform: rotate(30deg); } to { transform: rotate(-40deg); } }
+    @keyframes armR { from { transform: rotate(40deg); } to { transform: rotate(-30deg); } }
+    @keyframes leg { from { transform: rotate(12deg); } to { transform: rotate(-12deg); } }
+    .plate { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; padding: 22px; margin: 18px 0 12px; background: #DDE4EE; border-radius: 999px / 140px; box-shadow: inset 0 -6px 0 #C3CCDA, 0 8px 18px rgba(46,26,71,.15); }
+    .puri { position: relative; width: 64px; aspect-ratio: 1; border: 0; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 35% 30%, #F9DA97, #DB9C45 58%, #B9772A); box-shadow: 0 4px 0 #9C6220; }
+    .puri::after { content: ""; position: absolute; top: 18%; left: 28%; width: 44%; height: 26%; border-radius: 50%; background: #8A5A1F; box-shadow: inset 0 3px 4px rgba(0,0,0,.35); transition: background .25s; }
+    .puri.filled::after { background: radial-gradient(circle at 40% 40%, #8EE07A, #3E8E41); }
+    .puri.eaten { animation: crunch .35s ease-in forwards; }
+    @keyframes crunch { 40% { transform: scale(1.15) rotate(-10deg); } to { transform: scale(0) rotate(40deg); opacity: 0; } }
+    .count { font: 700 1.3rem "Fredoka", sans-serif; }
+
+    /* Pharmacy */
+    .rx { background: var(--card); border: 2px solid var(--ink); border-radius: 12px; transform: rotate(-1.5deg); width: min(100%, 420px); overflow: hidden; margin: 18px 0 8px; }
     .rx-top { background: var(--pink); color: #2E1A47; padding: 8px 16px; font: 700 1.1rem "Fredoka", sans-serif; border-bottom: 2px solid var(--ink); }
     .rx-top b { font-size: 1.4rem; margin-right: 6px; }
     .rx dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; padding: 14px 16px; }
-    .rx dt { color: var(--muted); }
-    .rx dd { font-weight: 700; }
-
-    /* Blister pack */
-    .pack-wrap { position: relative; margin-top: 70px; }
-    .pack {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 4vw, 24px);
-      padding: clamp(20px, 6vw, 36px); border-radius: 32px;
-      background: linear-gradient(135deg, var(--foil1), var(--foil2) 50%, var(--foil1));
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.55), 0 14px 32px rgba(46,26,71,.2);
-    }
-    .blister {
-      aspect-ratio: 1 / 1.45; border: 0; border-radius: 999px; cursor: pointer; display: grid; place-items: center;
-      background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.95), rgba(255,255,255,.4) 38%, rgba(255,255,255,.18));
-      box-shadow: inset 0 -8px 14px rgba(0,0,0,.08), 0 5px 10px rgba(46,26,71,.15);
-      transition: transform .15s;
-    }
+    .pack { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 4vw, 22px); padding: clamp(20px, 6vw, 32px); border-radius: 32px; background: linear-gradient(135deg, var(--foil1), var(--foil2) 50%, var(--foil1)); box-shadow: inset 0 0 0 2px rgba(255,255,255,.55), 0 14px 32px rgba(46,26,71,.2); }
+    .blister { aspect-ratio: 1 / 1.45; border: 0; border-radius: 999px; cursor: pointer; display: grid; place-items: center; background: radial-gradient(circle at 30% 22%, rgba(255,255,255,.95), rgba(255,255,255,.4) 38%, rgba(255,255,255,.18)); box-shadow: inset 0 -8px 14px rgba(0,0,0,.08), 0 5px 10px rgba(46,26,71,.15); transition: transform .15s; }
     .blister:hover:not(:disabled) { transform: translateY(-3px) scale(1.03); }
     .blister:active:not(:disabled) { transform: scale(.94); }
-    .capsule {
-      width: 46%; height: 80%; border-radius: 999px; transform: rotate(14deg);
-      background: linear-gradient(to bottom, var(--a) 50%, var(--b) 50%);
-      box-shadow: inset -5px 0 0 rgba(0,0,0,.1), inset 4px 0 0 rgba(255,255,255,.45);
-    }
+    .capsule { width: 46%; height: 80%; border-radius: 999px; transform: rotate(14deg); background: linear-gradient(to bottom, var(--a) 50%, var(--b) 50%); box-shadow: inset -5px 0 0 rgba(0,0,0,.1), inset 4px 0 0 rgba(255,255,255,.45); }
     .blister:disabled { cursor: default; background: rgba(46,26,71,.12); box-shadow: inset 0 3px 8px rgba(0,0,0,.18); outline: 2px dashed rgba(46,26,71,.25); outline-offset: -6px; }
     .blister:disabled .capsule { animation: popout .7s ease-in forwards; }
-    @keyframes popout {
-      30% { transform: translateY(-40%) scale(1.15) rotate(40deg); }
-      100% { transform: translateY(180%) rotate(220deg); opacity: 0; }
-    }
+    @keyframes popout { 30% { transform: translateY(-40%) scale(1.15) rotate(40deg); } 100% { transform: translateY(180%) rotate(220deg); opacity: 0; } }
     .status { text-align: center; margin-top: 14px; color: var(--muted); font-weight: 700; }
+    .doses { list-style: none; padding: 0; display: grid; gap: 10px; }
+    .doses li { display: grid; grid-template-columns: 2rem 1fr; gap: 8px; padding: 12px 16px; background: var(--card); border-radius: 16px; border-left: 6px solid var(--c, var(--lilac)); animation: slidein .35s ease-out; }
+    .doses li.empty { display: block; color: var(--muted); background: none; border-left-color: transparent; padding-left: 0; }
+    @keyframes slidein { from { transform: translateX(-12px); opacity: 0; } }
 
-    /* Cat */
-    .cat { position: absolute; top: -84px; right: 22px; width: 112px; background: none; border: 0; padding: 0; cursor: pointer; }
+    /* Cats */
+    .facts { background: var(--card); border: 2px solid var(--ink); border-radius: 24px; padding: 24px; display: grid; grid-template-columns: 96px 1fr; gap: 8px 20px; align-items: start; }
+    .facts .cat { grid-row: span 2; background: none; border: 0; padding: 0; cursor: pointer; }
+    .facts p { min-height: 4.8em; }
     .cat svg { display: block; width: 100%; overflow: visible; }
     .cat .fur { fill: var(--catfur); }
-    .cat .tail { fill: none; stroke: var(--catfur); }
-    .cat .eye { fill: var(--mint); transform-box: fill-box; transform-origin: center; animation: blink 5s infinite; }
-    .cat .tail { transform-origin: 96px 104px; transition: transform .3s; }
+    .cat .tail { fill: none; stroke: var(--catfur); transform-origin: 92px 104px; transition: transform .3s; }
     .cat:hover .tail { transform: rotate(-18deg); }
+    .cat .eye { fill: var(--mint); transform-box: fill-box; transform-origin: center; animation: blink 5s infinite; }
     @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+    .pet { width: 100%; height: clamp(440px, 70vh, 600px); border: 2px solid var(--ink); border-radius: 24px; background: #FBF5EC; display: block; }
+    .pet-link { display: inline-block; margin-top: 10px; color: var(--ink); font-weight: 700; }
 
-    /* Log + facts */
-    h2 { font: 700 1.6rem/1.2 "Fredoka", sans-serif; margin-bottom: 12px; }
-    .log ul { list-style: none; padding: 0; display: grid; gap: 10px; }
-    .log li { display: grid; grid-template-columns: 2rem 1fr; gap: 8px; padding: 12px 16px; background: var(--card); border-radius: 16px; border-left: 6px solid var(--c, var(--lilac)); animation: slidein .35s ease-out; }
-    .log li.empty { display: block; color: var(--muted); border-left-color: transparent; background: none; padding-left: 0; }
-    @keyframes slidein { from { transform: translateX(-12px); opacity: 0; } }
-    .facts { background: var(--card); border-radius: 24px; padding: 24px; border: 2px solid var(--ink); }
-    .facts p { min-height: 3.2em; }
-    .next { margin-top: 16px; background: var(--butter); color: #2E1A47; border: 2px solid var(--ink); border-radius: 999px; padding: 8px 20px; font-weight: 700; cursor: pointer; }
-    .next:active { transform: scale(.96); }
-    footer { text-align: center; color: var(--muted); }
+    /* Music */
+    .yt { width: 100%; max-width: 720px; aspect-ratio: 16 / 9; min-height: 200px; border: 2px solid var(--ink); border-radius: 20px; overflow: hidden; background: #000; margin-top: 12px; }
+    .yt iframe, .yt > div { width: 100%; height: 100%; display: block; }
+    .float { position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 60; display: none; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; border: 2px solid var(--ink); background: var(--sun); color: #2E1A47; font-weight: 700; cursor: pointer; box-shadow: 0 6px 16px rgba(46,26,71,.25); }
+    .opened .float { display: flex; }
+    .float .bars { display: inline-flex; gap: 2px; align-items: end; height: 14px; }
+    .float .bars i { width: 3px; height: 4px; background: #2E1A47; border-radius: 2px; }
+    .playing .float .bars i { animation: eq .5s ease-in-out infinite alternate; }
+    .playing .float .bars i:nth-child(2) { animation-delay: .15s; } .playing .float .bars i:nth-child(3) { animation-delay: .3s; }
+    @keyframes eq { to { height: 14px; } }
+
+    footer { text-align: center; color: var(--muted); padding: 32px 16px 96px; }
 
     /* Effects */
-    .fx { position: fixed; pointer-events: none; z-index: 50; line-height: 1; user-select: none; }
+    .fx { position: fixed; pointer-events: none; z-index: 90; line-height: 1; user-select: none; white-space: nowrap; }
     .burst { animation: burst 1s ease-out forwards; }
-    @keyframes burst {
-      from { transform: translate(-50%, -50%) scale(.4); }
-      to { transform: translate(calc(-50% + var(--dx)), calc(-50% - 110px)) scale(1.3) rotate(var(--r)); opacity: 0; }
-    }
+    .burst.word-fx { font: 700 22px "Fredoka", sans-serif; color: var(--marigold); }
+    @keyframes burst { from { transform: translate(-50%, -50%) scale(.4); } to { transform: translate(calc(-50% + var(--dx)), calc(-50% - 110px)) scale(1.3) rotate(var(--r)); opacity: 0; } }
     .rain { top: 0; animation: fall linear forwards; }
     @keyframes fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh) rotate(var(--r)); } }
     .gallop { top: 38vh; left: 0; font-size: 80px; animation: gallop 3.4s linear forwards; }
@@ -112,73 +176,164 @@
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
     }
   </style>
 </head>
-<body>
+<body class="locked">
+  <div class="gate" id="gate">
+    <p>A surprise for <span data-name>Sneha</span> 💛</p>
+    <button class="gift" id="open" aria-label="Open the surprise">
+      <svg viewBox="0 0 200 190" aria-hidden="true">
+        <rect x="30" y="80" width="140" height="105" rx="10" fill="#FFC93C" stroke="#2E1A47" stroke-width="4"/>
+        <rect x="88" y="80" width="24" height="105" fill="#FF8FC7" stroke="#2E1A47" stroke-width="4"/>
+        <g class="lid">
+          <rect x="20" y="58" width="160" height="30" rx="8" fill="#FFB000" stroke="#2E1A47" stroke-width="4"/>
+          <rect x="88" y="58" width="24" height="30" fill="#FF8FC7" stroke="#2E1A47" stroke-width="4"/>
+          <path d="M100 58 C70 20 40 40 62 56 Z M100 58 C130 20 160 40 138 56 Z" fill="#FF8FC7" stroke="#2E1A47" stroke-width="4" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <span class="btn">Open it</span>
+    </button>
+    <span class="hint">Sound on 🔊</span>
+  </div>
+
   <main>
-    <header>
-      <h1><span class="sr" id="title-text"></span><span aria-hidden="true" id="title-art"></span></h1>
-      <p class="lede">You finished your master's, and now you start your first job, at IQVIA in Kochi.</p>
-    </header>
-
-    <div class="rx" role="note" aria-label="Prescription label">
-      <div class="rx-top"><b>℞</b> Kochi Career Pharmacy</div>
-      <dl>
-        <dt>Patient</dt><dd data-name>{name}</dd>
-        <dt>Directions</dt><dd>Take one new career. Enjoy daily.</dd>
-        <dt>Refills</dt><dd>Unlimited</dd>
-      </dl>
-    </div>
-
-    <section aria-label="Pill pack">
-      <div class="pack-wrap">
-        <button class="cat" id="cat" aria-label="Cat. Tap for a cat biology fact.">
-          <svg viewBox="0 0 120 112" aria-hidden="true">
-            <path class="tail" d="M92 104 C118 100 120 72 106 64" stroke-width="9" stroke-linecap="round"/>
-            <path class="fur" d="M22 112 C22 74 38 60 60 60 C82 60 98 74 98 112Z"/>
-            <path class="fur" d="M30 16 L36 46 L52 32Z M90 16 L84 46 L68 32Z"/>
-            <ellipse class="fur" cx="60" cy="52" rx="33" ry="26"/>
-            <path d="M33 24 L37 40 L45 33Z M87 24 L83 40 L75 33Z" fill="#FF8FC7"/>
-            <ellipse class="eye" cx="47" cy="50" rx="7" ry="8"/>
-            <ellipse class="eye" cx="73" cy="50" rx="7" ry="8"/>
-            <circle class="pupil" cx="47" cy="50" r="3.6" fill="#1B1029"/>
-            <circle class="pupil" cx="73" cy="50" r="3.6" fill="#1B1029"/>
-            <path d="M57 61 L63 61 L60 65Z" fill="#FF8FC7"/>
-            <path d="M40 62 L22 59 M40 66 L22 68 M80 62 L98 59 M80 66 L98 68" stroke="#B79CFF" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <div class="pack" id="pack"></div>
+    <section class="hero wrap split">
+      <div>
+        <h1><span class="sr" id="title-text"></span><span aria-hidden="true" id="title-art"></span></h1>
+        <p class="lede">You finished your master's. Now you're a SAS Programmer / Analyst at IQVIA, working from home in Kochi.</p>
       </div>
-      <p class="status" id="status" aria-live="polite">Pop all six pills.</p>
+      <svg class="bouquet" id="bouquet" viewBox="0 0 400 450" role="img" aria-label="A bouquet of yellow flowers"></svg>
     </section>
 
-    <section class="log" aria-live="polite">
-      <h2>What was inside</h2>
-      <ul id="log"><li class="empty">Nothing yet. Pop a pill.</li></ul>
+    <section class="wrap">
+      <h2>The new job</h2>
+      <div class="split">
+        <div class="badge">
+          <div class="badge-top">SAS Programmer / Analyst<small>at IQVIA</small></div>
+          <dl>
+            <dt>Name</dt><dd data-name>Sneha</dd>
+            <dt>Base</dt><dd>Kochi, Kerala</dd>
+            <dt>Office</dt><dd>Home 🏠</dd>
+            <dt>Commute</dt><dd>0 km, bed to desk</dd>
+          </dl>
+        </div>
+        <div class="sas">
+          <div class="sas-bar"><span>congrats.sas</span><button class="btn" id="run">▶ Run</button></div>
+          <pre class="code" id="code"></pre>
+          <pre class="log" id="log" aria-live="polite"><span class="line muted">Press Run to submit the program.</span></pre>
+          <div class="results" id="results" hidden></div>
+        </div>
+      </div>
     </section>
 
-    <section class="facts">
-      <h2>Cat biology, for a pharmacist</h2>
-      <p id="fact" aria-live="polite">Tap the cat on the pill pack for a fact.</p>
-      <button class="next" id="next">Next cat fact</button>
+    <section class="wrap split">
+      <svg class="dancer" viewBox="0 0 160 210" role="img" aria-label="A panipuri in sunglasses, dancing">
+        <defs>
+          <radialGradient id="puriG" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#F9DA97"/><stop offset=".6" stop-color="#DB9C45"/><stop offset="1" stop-color="#B9772A"/></radialGradient>
+        </defs>
+        <g class="dance" stroke="#5A2E0E" stroke-width="6" stroke-linecap="round" fill="#5A2E0E">
+          <g class="leg-l"><path d="M68 138 L58 186"/><ellipse cx="52" cy="190" rx="12" ry="6" stroke="none"/></g>
+          <g class="leg-r"><path d="M92 138 L102 186"/><ellipse cx="108" cy="190" rx="12" ry="6" stroke="none"/></g>
+          <g class="arm-l"><path d="M36 100 L14 72"/><circle cx="11" cy="68" r="7" stroke="none"/></g>
+          <g class="arm-r"><path d="M124 100 L146 72"/><circle cx="149" cy="68" r="7" stroke="none"/></g>
+          <g stroke="none">
+            <circle cx="80" cy="100" r="48" fill="url(#puriG)"/>
+            <ellipse cx="60" cy="128" rx="3" ry="1.6" fill="#B9772A"/><ellipse cx="104" cy="132" rx="2.5" ry="1.4" fill="#B9772A"/><ellipse cx="112" cy="92" rx="2.5" ry="1.4" fill="#B9772A"/><ellipse cx="48" cy="96" rx="2" ry="1.2" fill="#B9772A"/>
+            <ellipse cx="80" cy="58" rx="24" ry="9" fill="#3E8E41"/>
+            <ellipse cx="76" cy="56" rx="10" ry="3" fill="#8EE07A" opacity=".7"/>
+            <circle cx="70" cy="58" r="3" fill="#E9C46A"/><circle cx="88" cy="59" r="2.6" fill="#E9C46A"/>
+            <rect x="55" y="86" width="22" height="14" rx="6" fill="#1B1029"/>
+            <rect x="83" y="86" width="22" height="14" rx="6" fill="#1B1029"/>
+            <path d="M58 90 l6 -2 M86 90 l6 -2" stroke="#FFFFFF" stroke-width="2"/>
+            <circle cx="60" cy="112" r="5" fill="#FF8FC7" opacity=".7"/><circle cx="100" cy="112" r="5" fill="#FF8FC7" opacity=".7"/>
+          </g>
+          <path d="M77 92 h6" stroke="#1B1029" stroke-width="3"/>
+          <path d="M68 114 Q80 127 92 114" fill="none" stroke-width="3.5"/>
+        </g>
+      </svg>
+      <div>
+        <h2>Panipuri break</h2>
+        <p class="hint">Tap a puri to fill it. Tap again to eat it.</p>
+        <div class="plate" id="plate"></div>
+        <p class="count" id="count" aria-live="polite">Panipuris eaten: 0</p>
+      </div>
     </section>
 
-    <footer>Click anywhere for unicorns. Type “meow” for a surprise. 🐾</footer>
+    <section class="wrap">
+      <h2>From Molecules to Miracles</h2>
+      <div class="split">
+        <div>
+          <div class="rx" role="note" aria-label="Prescription label">
+            <div class="rx-top"><b>℞</b> Kochi Career Pharmacy</div>
+            <dl>
+              <dt>Patient</dt><dd data-name>Sneha</dd>
+              <dt>Directions</dt><dd>Take one new career. Enjoy daily.</dd>
+              <dt>Refills</dt><dd>Unlimited</dd>
+            </dl>
+          </div>
+          <div class="pack" id="pack" aria-label="Pill pack"></div>
+          <p class="status" id="status" aria-live="polite">Pop all six pills.</p>
+        </div>
+        <ul class="doses" id="doses" aria-live="polite"><li class="empty">Nothing yet. Pop a pill.</li></ul>
+      </div>
+    </section>
+
+    <section class="wrap split">
+      <div>
+        <h2>Cat break</h2>
+        <div class="facts">
+          <button class="cat" id="cat" aria-label="Cat. Tap for a cat biology fact.">
+            <svg viewBox="0 0 120 112" aria-hidden="true">
+              <path class="tail" d="M92 104 C118 100 120 72 106 64" stroke-width="9" stroke-linecap="round"/>
+              <path class="fur" d="M22 112 C22 74 38 60 60 60 C82 60 98 74 98 112Z"/>
+              <path class="fur" d="M30 16 L36 46 L52 32Z M90 16 L84 46 L68 32Z"/>
+              <ellipse class="fur" cx="60" cy="52" rx="33" ry="26"/>
+              <path d="M33 24 L37 40 L45 33Z M87 24 L83 40 L75 33Z" fill="#FF8FC7"/>
+              <ellipse class="eye" cx="47" cy="50" rx="7" ry="8"/>
+              <ellipse class="eye" cx="73" cy="50" rx="7" ry="8"/>
+              <circle class="pupil" cx="47" cy="50" r="3.6" fill="#1B1029"/>
+              <circle class="pupil" cx="73" cy="50" r="3.6" fill="#1B1029"/>
+              <path d="M57 61 L63 61 L60 65Z" fill="#FF8FC7"/>
+              <path d="M40 62 L22 59 M40 66 L22 68 M80 62 L98 59 M80 66 L98 68" stroke="#B79CFF" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <p id="fact" aria-live="polite">Cat biology, for a pharmacist. Tap the cat for a fact.</p>
+          <button class="btn" id="next">Next cat fact</button>
+        </div>
+      </div>
+      <div>
+        <iframe class="pet" src="https://pet-the-cat.pages.dev/" title="Pet the cat game" loading="lazy"></iframe>
+        <a class="pet-link" href="https://pet-the-cat.pages.dev/" target="_blank" rel="noopener">Open the cat full screen 🐾</a>
+      </div>
+    </section>
+
+    <section class="wrap" id="music">
+      <h2>Now playing 🎶</h2>
+      <p class="hint">Swag Se Swagat, from Tiger Zinda Hai. Official video from YRF.</p>
+      <div class="yt"><div id="yt"></div></div>
+    </section>
   </main>
 
+  <footer>Made with 💛, panipuri and a little SAS.<br>Click anywhere for unicorns. Type “meow” for a surprise. 🐾</footer>
+
+  <button class="float" id="float" aria-label="Play or pause the song"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span id="float-label">Play song</span></button>
+
   <script>
-    const NAME = "{name}"; // ← put their name here
+    const NAME = "Sneha";
 
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const $ = (s) => document.querySelector(s);
+    const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const YELLOWS = ["#FFC93C", "#FFB000", "#FF9F1C", "#FFE680", "#FF8FC7", "#B79CFF", "#7FE3C4"];
 
-    // Name + animated headline
+    // ---------- Name + headline ----------
     document.querySelectorAll("[data-name]").forEach((el) => (el.textContent = NAME));
-    document.title = `Congratulations, ${NAME}! 🦄`;
+    document.title = `Congratulations, ${NAME}! 🌻`;
     const headline = `Congratulations, ${NAME}!`;
     $("#title-text").textContent = headline;
-    let i = 0;
+    let li = 0;
     headline.split(" ").forEach((word, w, all) => {
       const wEl = document.createElement("span");
       wEl.className = "word";
@@ -186,38 +341,33 @@
         const l = document.createElement("span");
         l.className = "ltr";
         l.textContent = ch;
-        l.style.setProperty("--i", i++);
+        l.style.setProperty("--i", li++);
         wEl.append(l);
       }
       $("#title-art").append(wEl);
       if (w < all.length - 1) $("#title-art").append(" ");
     });
 
-    // Effects
-    function fx(char, cls, x, y, size) {
+    // ---------- Effects ----------
+    function fx(text, cls, x, y, size) {
       if (still) return;
       const el = document.createElement("span");
       el.className = `fx ${cls}`;
-      el.textContent = char;
+      el.textContent = text;
       el.style.left = x + "px";
       if (y != null) el.style.top = y + "px";
-      el.style.fontSize = size + "px";
+      if (size) el.style.fontSize = size + "px";
       el.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
       el.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
       el.addEventListener("animationend", () => el.remove());
       document.body.append(el);
       return el;
     }
-    function burst(x, y, chars) {
-      chars.forEach((c, k) => fx(c, "burst", x, y, k ? 18 : 34));
-    }
+    const burst = (x, y, chars) => chars.forEach((c, k) => fx(c, "burst", x, y, k ? 18 : 34));
     function rain(chars, n) {
       for (let k = 0; k < n; k++) {
         const el = fx(chars[k % chars.length], "rain", Math.random() * innerWidth, null, 20 + Math.random() * 22);
-        if (el) {
-          el.style.animationDuration = 2.6 + Math.random() * 2.4 + "s";
-          el.style.animationDelay = Math.random() * 1.6 + "s";
-        }
+        if (el) { el.style.animationDuration = 2.6 + Math.random() * 2.4 + "s"; el.style.animationDelay = Math.random() * 1.6 + "s"; }
       }
     }
     function gallop() {
@@ -228,21 +378,195 @@
       el.addEventListener("animationend", (e) => e.target === el && el.remove());
       document.body.append(el);
     }
+    function confettiBurst(big) {
+      if (!window.confetti) return;
+      const opts = { colors: YELLOWS, disableForReducedMotion: true, zIndex: 95 };
+      confetti({ ...opts, particleCount: big ? 160 : 90, spread: 100, startVelocity: 45, origin: { y: 0.6 } });
+      if (big) {
+        confetti({ ...opts, particleCount: 60, angle: 60, spread: 60, origin: { x: 0, y: 0.7 } });
+        confetti({ ...opts, particleCount: 60, angle: 120, spread: 60, origin: { x: 1, y: 0.7 } });
+      }
+    }
 
-    // Unicorns on click
-    document.addEventListener("pointerdown", (e) => {
-      if (e.target.closest("button")) return;
-      burst(e.clientX, e.clientY, ["🦄", "✨", "✨", "💜"]);
+    // ---------- Bouquet ----------
+    (function bouquet() {
+      let seed = 11;
+      const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+      const sizes = [46, 42, 38, 36, 33, 30, 28, 27, 25, 23, 22, 20, 19, 18, 17, 16, 15, 14, 13, 12, 12, 11, 10, 10, 9];
+      const placed = [];
+      for (const r of sizes) {
+        for (let t = 0; t < 400; t++) {
+          const x = 200 + (rnd() * 2 - 1) * 165, y = 40 + rnd() * 250;
+          if (((x - 200) / 170) ** 2 + ((y - 165) / 130) ** 2 > 1 || y > 280) continue;
+          if (placed.every((p) => Math.hypot(p.x - x, p.y - y) >= (p.r + r) * 0.82)) { placed.push({ x, y, r }); break; }
+        }
+      }
+      const ring = (n, fn) => Array.from({ length: n }, (_, i) => fn((360 / n) * i, i)).join("");
+      const KINDS = {
+        sun: (r) => ring(18, (a, i) => `<ellipse cy="${-r * 0.62}" rx="${r * 0.17}" ry="${r * 0.4}" transform="rotate(${a})" fill="${i % 2 ? "#FFC93C" : "#FFB000"}"/>`) +
+          ring(18, (a) => `<ellipse cy="${-r * 0.5}" rx="${r * 0.13}" ry="${r * 0.3}" transform="rotate(${a + 10})" fill="#FFD95A"/>`) +
+          `<circle r="${r * 0.4}" fill="#6B3E1F"/><circle r="${r * 0.27}" fill="#4A2A12"/>` +
+          ring(8, (a) => `<circle cy="${-r * 0.16}" r="${r * 0.035}" transform="rotate(${a})" fill="#C98A3A"/>`),
+        mari: (r) => [[1, "#FF9F1C"], [0.74, "#FFB627"], [0.48, "#FFD23F"]].map(([k, c]) =>
+          ring(12, (a) => `<circle cy="${-r * 0.66 * k}" r="${r * 0.3 * k}" transform="rotate(${a + k * 20})" fill="${c}"/>`)).join("") +
+          `<circle r="${r * 0.14}" fill="#E07A00"/>`,
+        daisy: (r) => ring(12, (a) => `<ellipse cy="${-r * 0.55}" rx="${r * 0.16}" ry="${r * 0.45}" transform="rotate(${a})" fill="#FFE680" stroke="#F2C94C" stroke-width=".6"/>`) +
+          `<circle r="${r * 0.26}" fill="#F4A100"/>`,
+        butter: (r) => ring(5, (a) => `<circle cy="${-r * 0.48}" r="${r * 0.44}" transform="rotate(${a})" fill="#FFD60A" stroke="#F2B705" stroke-width=".6"/>`) +
+          `<circle r="${r * 0.2}" fill="#F4A100"/><circle cx="${-r * 0.06}" cy="${-r * 0.06}" r="${r * 0.07}" fill="#FFF3B0"/>`,
+      };
+      const order = ["sun", "mari", "daisy", "butter"];
+      let stems = "", leaves = "", flowers = "";
+      placed.forEach((p, i) => {
+        const bx = 200 + (p.x - 200) * 0.12;
+        stems += `<path d="M${p.x} ${p.y} Q${(p.x + bx) / 2} ${p.y + 70} ${bx} 340" stroke="#4C8C4A" stroke-width="${Math.max(2, p.r / 10)}" fill="none" stroke-linecap="round"/>`;
+        if (i % 4 === 1) {
+          const lx = (p.x + bx) / 2, ly = p.y + 50, side = p.x < 200 ? -1 : 1;
+          leaves += `<ellipse cx="${lx + side * 10}" cy="${ly}" rx="14" ry="5" transform="rotate(${side * 30} ${lx} ${ly})" fill="#5DA271"/>`;
+        }
+        const kind = p.r > 30 ? (i % 2 ? "mari" : "sun") : order[i % 4];
+        flowers += `<g transform="translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})"><g class="bloom" style="--d:${(0.4 + i * 0.06).toFixed(2)}s"><g class="flower" style="--s:${(1.6 + rnd() * 1.6).toFixed(2)}s;animation-delay:-${(rnd() * 2).toFixed(2)}s">${KINDS[kind](p.r)}</g></g></g>`;
+      });
+      const wrap = `<path d="M118 300 L282 300 L214 446 L186 446 Z" fill="#E8C9A0" stroke="#2E1A47" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M118 300 L200 446 L150 300 Z" fill="#F3DDBB"/>
+        <path d="M282 300 L200 446 L250 300 Z" fill="#D9B482"/>
+        <path d="M160 352 C120 320 110 360 150 366 Z M240 352 C280 320 290 360 250 366 Z" fill="#FF8FC7" stroke="#2E1A47" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M192 360 L176 404 M208 360 L226 400" stroke="#FF8FC7" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="200" cy="356" r="11" fill="#FF8FC7" stroke="#2E1A47" stroke-width="3"/>`;
+      $("#bouquet").innerHTML = stems + leaves + flowers + wrap;
+    })();
+
+    // ---------- Gate + music ----------
+    let player, ytReady = false, wantPlay = false, playing = false;
+    function setPlaying(on) {
+      playing = on;
+      document.body.classList.toggle("playing", on);
+      $("#float-label").textContent = on ? "Pause song" : "Play song";
+    }
+    window.onYouTubeIframeAPIReady = () => {
+      player = new YT.Player("yt", {
+        videoId: "xmU0s2QtaEY",
+        playerVars: { playsinline: 1, rel: 0 },
+        events: {
+          onReady: () => { ytReady = true; if (wantPlay) player.playVideo(); },
+          onStateChange: (e) => setPlaying(e.data === YT.PlayerState.PLAYING),
+        },
+      });
+    };
+    const yts = document.createElement("script");
+    yts.src = "https://www.youtube.com/iframe_api";
+    document.head.append(yts);
+
+    $("#open").addEventListener("click", () => {
+      wantPlay = true;
+      if (ytReady) player.playVideo();
+      document.body.classList.add("opened");
+      document.body.classList.remove("locked");
+      confettiBurst(true);
+      setTimeout(() => $("#gate").remove(), 1000);
+    });
+    $("#float").addEventListener("click", () => {
+      if (!ytReady) { $("#music").scrollIntoView(); return; }
+      playing ? player.pauseVideo() : player.playVideo();
     });
 
-    // Blister pack
+    // ---------- Click anywhere: unicorns (flowers spin) ----------
+    document.addEventListener("pointerdown", (e) => {
+      if (!document.body.classList.contains("opened")) return;
+      const flower = e.target.closest(".flower");
+      if (flower) {
+        flower.classList.remove("spin"); void flower.getBBox(); flower.classList.add("spin");
+        flower.addEventListener("animationend", () => flower.classList.remove("spin"), { once: true });
+        return burst(e.clientX, e.clientY, ["🌼", "🌻", "✨"]);
+      }
+      if (e.target.closest("button, a, iframe, .sas")) return;
+      burst(e.clientX, e.clientY, ["🦄", "✨", "✨", "💛"]);
+    });
+
+    // ---------- SAS ----------
+    const k = (s) => `<span class="kw">${s}</span>`, st = (s) => `<span class="st">${s}</span>`,
+          str = (s) => `<span class="str">${esc(s)}</span>`, num = (s) => `<span class="num">${s}</span>`;
+    const CODE = [
+      `<span class="cm">/* New job, new dataset */</span>`,
+      `${k("data")} work.new_job;`,
+      `  ${st("set")} work.masters_done;`,
+      `  role       = ${str('"SAS Programmer / Analyst"')};`,
+      `  company    = ${str('"IQVIA"')};`,
+      `  location   = ${str('"Kochi (work from home)"')};`,
+      `  commute_km = ${num("0")};`,
+      `  fav_snack  = ${str('"panipuri"')};`,
+      `${k("run")};`,
+      ``,
+      `${k("proc print")} ${st("data")}=work.new_job ${st("noobs")};`,
+      `  ${st("title")} ${str(`"Congratulations, ${NAME}!"`)};`,
+      `${k("run")};`,
+    ];
+    $("#code").innerHTML = CODE.map((l) => `<span class="line">${l || " "}</span>`).join("");
+    const LOG = [
+      ["", "1    data work.new_job;"],
+      ["", "...  (8 lines)"],
+      ["note", "NOTE: There were 1 observations read from the data set WORK.MASTERS_DONE."],
+      ["note", "NOTE: The data set WORK.NEW_JOB has 1 observations and 5 variables."],
+      ["note", "NOTE: DATA statement used (Total process time):"],
+      ["", "      real time           0.01 seconds"],
+      ["", "11   proc print data=work.new_job noobs;"],
+      ["note", "NOTE: There were 1 observations read from the data set WORK.NEW_JOB."],
+      ["note", "NOTE: PROCEDURE PRINT used (Total process time):"],
+      ["", "      real time           0.02 seconds"],
+      ["note", "NOTE: 0 errors, 0 warnings, 100% swag."],
+    ];
+    $("#run").addEventListener("click", () => {
+      const run = $("#run"), log = $("#log"), res = $("#results");
+      run.disabled = true; run.textContent = "Running…";
+      log.innerHTML = ""; res.hidden = true;
+      LOG.forEach(([cls, text], n) => setTimeout(() => {
+        const s = document.createElement("span");
+        s.className = `line ${cls}`;
+        s.textContent = text;
+        log.append(s);
+        if (n === LOG.length - 1) {
+          res.innerHTML = `<h3>Congratulations, ${esc(NAME)}!</h3><table><thead><tr><th>role</th><th>company</th><th>location</th><th>commute_km</th><th>fav_snack</th></tr></thead>
+            <tbody><tr><td>SAS Programmer / Analyst</td><td>IQVIA</td><td>Kochi (work from home)</td><td>0</td><td>panipuri</td></tr></tbody></table>`;
+          res.hidden = false;
+          run.disabled = false; run.textContent = "▶ Run again";
+          const r = run.getBoundingClientRect();
+          burst(r.left + r.width / 2, r.top, ["📊", "✨", "✨"]);
+        }
+      }, still ? 0 : 180 * (n + 1)));
+    });
+
+    // ---------- Panipuri ----------
+    let eaten = 0;
+    const MILESTONES = { 5: "Bhaiya, ek aur! 🙌", 10: "Now the sukha puri, please.", 20: "Okay. Back to SAS. 📊" };
+    for (let n = 0; n < 6; n++) {
+      const p = document.createElement("button");
+      p.className = "puri";
+      p.setAttribute("aria-label", "Puri. Tap to fill.");
+      p.addEventListener("click", () => {
+        if (p.classList.contains("eaten")) return;
+        const r = p.getBoundingClientRect();
+        if (!p.classList.contains("filled")) {
+          p.classList.add("filled");
+          p.setAttribute("aria-label", "Filled puri. Tap to eat.");
+          return burst(r.left + r.width / 2, r.top + 10, ["💧", "🌿"]);
+        }
+        p.classList.add("eaten");
+        eaten++;
+        const el = fx("crunch!", "burst word-fx", r.left + r.width / 2, r.top);
+        $("#count").textContent = MILESTONES[eaten] || `Panipuris eaten: ${eaten}`;
+        setTimeout(() => { p.className = "puri"; p.setAttribute("aria-label", "Puri. Tap to fill."); }, still ? 300 : 900);
+      });
+      $("#plate").append(p);
+    }
+
+    // ---------- Pill pack ----------
     const DOSES = [
       ["🎓", "Master's degree: complete.", "#FF8FC7", "#FFFFFF"],
-      ["💼", "First job: IQVIA. Day one is close.", "#7FE3C4", "#FFFFFF"],
-      ["🌴", "New home base: Kochi. Backwaters, Chinese fishing nets, appam and stew.", "#FFD966", "#FF8FC7"],
+      ["📊", "New title: SAS Programmer / Analyst at IQVIA.", "#7FE3C4", "#FFFFFF"],
+      ["🏠", "Office: home. Base: Kochi. Commute: zero.", "#FFD966", "#FF8FC7"],
       ["🧪", "Pharmacy 101: From Molecules to Miracles. You showed Class 11 and 12 students the world beyond the lab coat.", "#8EC9FF", "#FFFFFF"],
-      ["🦄", "Side effects may include confidence, a first payslip, and very big plans.", "#B79CFF", "#7FE3C4"],
-      ["🐱", "Not for cats. Paracetamol is toxic to them. Tap the cat to find out why.", "#FF8FC7", "#FFD966"],
+      ["🦄", "Side effects may include confidence, a first payslip, and unlimited panipuri.", "#B79CFF", "#7FE3C4"],
+      ["🐱", "Not for cats. Paracetamol is toxic to them. The cat below explains.", "#FF8FC7", "#FFD966"],
     ];
     let left = DOSES.length;
     DOSES.forEach(([emoji, text, a, b], n) => {
@@ -254,22 +578,19 @@
         btn.disabled = true;
         const r = btn.getBoundingClientRect();
         burst(r.left + r.width / 2, r.top + r.height / 2, [emoji, "✨", "✨"]);
-        const log = $("#log");
-        log.querySelector(".empty")?.remove();
-        const li = document.createElement("li");
-        li.style.setProperty("--c", a);
-        li.innerHTML = `<span aria-hidden="true">${emoji}</span><span>${text}</span>`;
-        log.append(li);
+        $("#doses .empty")?.remove();
+        const item = document.createElement("li");
+        item.style.setProperty("--c", a);
+        item.innerHTML = `<span aria-hidden="true">${emoji}</span><span>${text}</span>`;
+        $("#doses").append(item);
         left--;
-        $("#status").textContent = left
-          ? `${left} left.`
-          : "Course complete. Refills: unlimited. 🦄";
-        if (!left) { gallop(); rain(["🦄", "💊", "✨", "🐱", "🧬", "🎓"], 90); }
+        $("#status").textContent = left ? `${left} left.` : "Course complete. Refills: unlimited. 🦄";
+        if (!left) { gallop(); confettiBurst(true); rain(["🦄", "🌻", "💊", "🐱", "🌼"], 60); }
       });
       $("#pack").append(btn);
     });
 
-    // Cat facts
+    // ---------- Cat ----------
     const FACTS = [
       "Paracetamol is toxic to cats. Their liver makes very little UGT1A6, the enzyme that most mammals use to clear it.",
       "Cats cannot taste sweet things. Their sweet-receptor gene, Tas1r2, is broken.",
@@ -279,29 +600,23 @@
       "A cat purrs at about 25 to 150 Hz. The sound comes from fast twitches of the muscles in the larynx.",
     ];
     let f = -1;
-    function nextFact() {
-      f = (f + 1) % FACTS.length;
-      $("#fact").textContent = FACTS[f];
-    }
+    const nextFact = () => { f = (f + 1) % FACTS.length; $("#fact").textContent = FACTS[f]; };
     $("#next").addEventListener("click", nextFact);
-    $("#cat").addEventListener("click", (e) => {
+    $("#cat").addEventListener("click", () => {
       nextFact();
       const r = $("#cat").getBoundingClientRect();
       burst(r.left + r.width / 2, r.top + 20, ["💜", "🐟", "✨"]);
     });
-
-    // Cat eyes follow the pointer
-    const pupils = [...document.querySelectorAll(".pupil")];
-    const eyes = [...document.querySelectorAll(".eye")];
+    const pupils = [...document.querySelectorAll(".pupil")], eyes = [...document.querySelectorAll(".eye")];
     addEventListener("pointermove", (e) => {
-      pupils.forEach((p, k) => {
-        const r = eyes[k].getBoundingClientRect();
+      pupils.forEach((p, n) => {
+        const r = eyes[n].getBoundingClientRect();
         const ang = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
         p.setAttribute("transform", `translate(${Math.cos(ang) * 3} ${Math.sin(ang) * 3.5})`);
       });
     });
 
-    // Type "meow"
+    // ---------- Type "meow" ----------
     let typed = "";
     addEventListener("keydown", (e) => {
       typed = (typed + e.key.toLowerCase()).slice(-4);
